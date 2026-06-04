@@ -1,0 +1,39 @@
+const aura = document.querySelector(".cursor-aura");
+const nav = document.querySelector(".nav");
+const menuBtn = document.querySelector(".menu-btn");
+
+window.addEventListener("mousemove", (event) => {
+  if (!aura) return;
+  aura.style.left = `${event.clientX}px`;
+  aura.style.top = `${event.clientY}px`;
+});
+
+if (menuBtn && nav) {
+  menuBtn.addEventListener("click", () => {
+    nav.classList.toggle("open");
+  });
+}
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) entry.target.classList.add("visible");
+  });
+}, { threshold: 0.14 });
+
+document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
+
+document.querySelectorAll(".tilt-card, .panel, .feature-card, .relation-card, .step").forEach((card) => {
+  card.addEventListener("mousemove", (event) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 8;
+    const y = ((event.clientY - rect.top) / rect.height - 0.5) * -8;
+
+    card.style.transform = `perspective(900px) rotateX(${y}deg) rotateY(${x}deg) translateY(-2px)`;
+    card.style.borderColor = "rgba(255, 79, 216, 0.56)";
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "";
+    card.style.borderColor = "";
+  });
+});
